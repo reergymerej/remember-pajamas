@@ -1,26 +1,32 @@
-import React, { Component } from 'react';
+import React from 'react'
 import { connect } from 'react-redux'
-import { increment, decrement } from '../actions'
+import { loadItems, loadItemsCancel } from '../actions'
+import * as selectors from '../selectors'
 
-class App extends Component {
+class App extends React.Component {
   render() {
     return (
       <div className="container mx-auto my-8">
-        <div>{this.props.count}</div>
-        <button onClick={this.props.decrement}>decrement</button>
-        <button onClick={this.props.increment}>increment</button>
+        { !this.props.isLoading
+          ? <button onClick={this.props.loadItems}>Load Items</button>
+          : <button onClick={this.props.loadItemsCancel}>Cancel Load Items</button>
+        }
+        { this.props.hasLoadTimeout &&
+          <div>timed out loading items</div>
+        }
       </div>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
-  count: state.count,
+  isLoading: selectors.getIsLoading(state),
+  hasLoadTimeout: selectors.getItemLoadTimeout(state),
 })
 
 const mapDispatchToProps = {
-  increment,
-  decrement,
+  loadItems,
+  loadItemsCancel,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)
