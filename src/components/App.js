@@ -2,14 +2,15 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { loadItems, loadItemsCancel } from '../actions'
 import * as selectors from '../selectors'
+import Button from './Button'
 
 class App extends React.Component {
   render() {
     return (
       <div className="container mx-auto my-8">
         { !this.props.isLoading
-          ? <button onClick={this.props.loadItems}>Load Items</button>
-          : <button onClick={this.props.loadItemsCancel}>Cancel Load Items</button>
+          ? <Button onClick={this.props.loadItems}>Load Items</Button>
+          : <Button onClick={this.props.loadItemsCancel}>Cancel Load Items</Button>
         }
         { this.props.hasLoadTimeout &&
           <div>timed out loading items</div>
