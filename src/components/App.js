@@ -15,6 +15,14 @@ class App extends React.Component {
         { this.props.hasLoadTimeout &&
           <div>timed out loading items</div>
         }
+        { this.props.hasLoadItemsError &&
+          <div>error loading items</div>
+        }
+        { this.props.items.map(item => (
+          <div key={item._id}>
+            {item._id}
+          </div>
+        ))}
       </div>
     )
   }
@@ -23,6 +31,8 @@ class App extends React.Component {
 const mapStateToProps = (state) => ({
   isLoading: selectors.getIsLoading(state),
   hasLoadTimeout: selectors.getItemLoadTimeout(state),
+  hasLoadItemsError: selectors.getItemsLoadError(state),
+  items: selectors.getItems(state),
 })
 
 const mapDispatchToProps = {

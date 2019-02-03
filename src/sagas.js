@@ -1,30 +1,47 @@
-import { takeEvery, delay, all, race, call, put } from 'redux-saga/effects'
+import { takeEvery, delay, all, race, call, put, fork, take, cancelled, cancel } from 'redux-saga/effects'
 import * as ACTIONS from './actions'
+import * as api from './api'
 
-const api = {
-  loadItems: () => new Promise(() => {}),
-  // loadItems: () => Promise.resolve([{foo: 'bar'}])
-}
+function* fetchItems() {
+  try {
+    const { items, timeout } = yield race({
+      timeout: delay(5000),
+      items: call(api.loadItems),
+    })
 
-function* loadItems(action) {
-  // Once one of these finishes, we can proceed.
-  const { items, timeout } = yield race({
-    items: call(api.loadItems),
-    timeout: delay(1000),
-  })
+    if (timeout) {
+      yield put(ACTIONS.loadItemsTimeout())
+    } else {
+      yield put(ACTIONS.loadItemsOk(items.data))
+    }
 
-  if (timeout) {
-    yield put(ACTIONS.loadItemsTimeout())
-  } else if (items) {
-    console.log('got the items!', items)
+  } catch (e) {
+    yield put(ACTIONS.loadItemsError(e))
+  } finally {
+    if (yield cancelled()) {
+      console.log('I got cancelled!')
+    }
   }
 }
 
-// The load items saga.
-// This handles all the logic around loading items.
+// This is the logic to call the api and handle cancellation.
+function* loadItems() {
+  const task = yield fork(fetchItems)
+  // If I don't take any that could also come from the fork, will this just sit
+  // here?
+  const action = yield take([
+    ACTIONS.LOAD_ITEMS_TIMEOUT,
+    ACTIONS.LOAD_ITEMS_ERR,
+    ACTIONS.LOAD_ITEMS_CANCEL,
+    ACTIONS.LOAD_ITEMS_OK,
+  ])
+
+  if (action.type === ACTIONS.LOAD_ITEMS_CANCEL) {
+    yield cancel(task)
+  }
+}
+
 function* watchLoadItems() {
-  // Every time we observe a LOAD_ITEMS_REQ, we trigger the AJAX call.  This
-  // does not handle redundancies, though.  :O
   yield takeEvery(ACTIONS.LOAD_ITEMS_REQ, loadItems)
 }
 
