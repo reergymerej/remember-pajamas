@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { loadItems, loadItemsCancel } from '../actions'
 import * as selectors from '../selectors'
 import Button from './Button'
+import ItemList from './ItemList'
 
 class App extends React.Component {
   render() {
@@ -12,17 +13,9 @@ class App extends React.Component {
           ? <Button onClick={this.props.loadItems}>Load Items</Button>
           : <Button onClick={this.props.loadItemsCancel}>Cancel Load Items</Button>
         }
-        { this.props.hasLoadTimeout &&
-          <div>timed out loading items</div>
-        }
-        { this.props.hasLoadItemsError &&
-          <div>error loading items</div>
-        }
-        { this.props.items.map(item => (
-          <div key={item._id}>
-            {item._id}
-          </div>
-        ))}
+        { this.props.hasLoadTimeout && <div>timed out loading items</div> }
+        { this.props.hasLoadItemsError && <div>error loading items</div> }
+        { this.props.items.length > 0 && <ItemList items={this.props.items} /> }
       </div>
     )
   }

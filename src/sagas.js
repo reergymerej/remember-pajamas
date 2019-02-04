@@ -5,7 +5,7 @@ import * as api from './api'
 function* fetchItems() {
   try {
     const { items, timeout } = yield race({
-      timeout: delay(5000),
+      timeout: delay(2000),
       items: call(api.loadItems),
     })
 
