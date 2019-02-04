@@ -12,7 +12,7 @@ function* fetchItems() {
     if (timeout) {
       yield put(ACTIONS.loadItemsTimeout())
     } else {
-      yield put(ACTIONS.loadItemsOk(items.data))
+      yield put(ACTIONS.loadItemsOk(items.data, items.paging))
     }
 
   } catch (e) {

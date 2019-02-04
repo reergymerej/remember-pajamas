@@ -38,6 +38,7 @@ export default (state = initialState, action) => {
         ...state,
         isLoadingItems: false,
         items: action.items,
+        itemsPaging: action.paging,
       }
     default:
       return state
