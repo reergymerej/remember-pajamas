@@ -9,6 +9,9 @@ class App extends React.Component {
   render() {
     return (
       <div className="container mx-auto my-8">
+        <div>
+          pages: { this.props.pages }
+        </div>
         { !this.props.isLoading
           ? <Button onClick={this.props.loadItems}>Load Items</Button>
           : <Button onClick={this.props.loadItemsCancel}>Cancel Load Items</Button>
@@ -26,6 +29,7 @@ const mapStateToProps = (state) => ({
   hasLoadTimeout: selectors.getItemLoadTimeout(state),
   hasLoadItemsError: selectors.getItemsLoadError(state),
   items: selectors.getItems(state),
+  pages: selectors.getTotalPages(state),
 })
 
 const mapDispatchToProps = {
